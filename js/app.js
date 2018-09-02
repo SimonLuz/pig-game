@@ -9,65 +9,91 @@ GAME RULES:
 
 */
 
-var scores, roundScore, activePlayer;
+var scores, roundScore, activePlayer; 
 
-scores = [0, 0];
-roundScore = 0;
-activePlayer = 0;
+//++++++++++++++++
+//STATE variable
+//++++++++++++++++
+var gamePlaying;
 
-//+++++++++++++++++++
-// DOM Manipulation
-//+++++++++++++++++++
-//Hiding the dice ++++++++++++++++++++++
-document.querySelector(".dice").style.display = "none";
+init();
 
-// Setting all scores to 0 ++++++++++++++++++
-document.getElementById("current-0").textContent = 0;
-document.getElementById("current-1").textContent = 0;
-document.getElementById("score-0").textContent = 0;
-document.getElementById("score-1").textContent = 0;
+function init() {
+    scores = [0, 0];
+    roundScore = 0;
+    activePlayer = 0;
+    gamePlaying = true;
+    
+    //Hiding the dice ++++++++++++++++++++++
+    document.querySelector(".dice").style.display = "none";
+
+    // Setting all scores to 0 ++++++++++++++++++
+    document.getElementById("current-0").textContent = 0;
+    document.getElementById("current-1").textContent = 0;
+    document.getElementById("score-0").textContent = 0;
+    document.getElementById("score-1").textContent = 0;
+    
+    document.getElementById("name-0").textContent = "Player 1";
+    document.getElementById("name-1").textContent = "Player 2";
+    
+    document.querySelector(".player-0-panel").classList.remove("winner");
+    document.querySelector(".player-1-panel").classList.remove("winner");
+    
+    document.querySelector(".player-0-panel").classList.remove("active");
+    document.querySelector(".player-1-panel").classList.remove("active");
+    
+    document.querySelector(".player-0-panel").classList.add("active");
+}
 
 //++++++++++++++++
 //BUTTONS
 //++++++++++++++++
 document.querySelector(".btn-roll").addEventListener("click", function() {
-    var dice = Math.floor(Math.random() * 6) + 1;
-    
-    var diceDOM = document.querySelector(".dice");
-    
-    diceDOM.style.display = "block";
-    
-    diceDOM.src = "img/dice-" + dice + ".png";
-    
-    if(dice !==1) {
-        roundScore += dice;
-        
-        document.querySelector("#current-" + activePlayer).textContent = roundScore;
-        
-    } else {
-        nextPlayer();
+    if (gamePlaying) {
+        var dice = Math.floor(Math.random() * 6) + 1;
+
+        var diceDOM = document.querySelector(".dice");
+
+        diceDOM.style.display = "block";
+
+        diceDOM.src = "img/dice-" + dice + ".png";
+
+        if(dice !==1) {
+            roundScore += dice;
+
+            document.querySelector("#current-" + activePlayer).textContent = roundScore;
+
+        } else {
+            nextPlayer();
+        }
     }
-});
+});    
+        
 
 //++++++++++++++++++++++++++++
 // Button HOLD functionality
 //++++++++++++++++++++++++++++
 document.querySelector(".btn-hold").addEventListener("click", function() {
+    if (gamePlaying) {
+        scores[activePlayer] += roundScore;
     
-    scores[activePlayer] += roundScore;
+        document.querySelector("#score-" + activePlayer).textContent = scores[activePlayer];
     
-    document.querySelector("#score-" + activePlayer).textContent = scores[activePlayer];
-    
-    if (scores[activePlayer] >= 20) {
-        document.querySelector("#name-" + activePlayer).textContent = "Pl. "+ (activePlayer+1) + " WINS!!!"
-        document.querySelector(".dice").style.display="none";
-        document.querySelector(".player-"+activePlayer+"-panel").classList.add("winner");
-        document.querySelector(".player-"+activePlayer+"-panel").classList.remove("active");
+        if (scores[activePlayer] >= 20) {
+            document.querySelector("#name-" + activePlayer).textContent = "Pl. "+ (activePlayer+1) + " WINS!!!"
+            document.querySelector(".dice").style.display="none";
+            document.querySelector(".player-"+activePlayer+"-panel").classList.add("winner");
+            document.querySelector(".player-"+activePlayer+"-panel").classList.remove("active");
+
+            gamePlaying = false;
         
-    } else {
-        nextPlayer();        
+        } else {
+            nextPlayer();        
+        }
     }
 })
+    
+    
 
 function nextPlayer() {
     document.querySelector("#current-" + activePlayer).textContent = 0;
@@ -80,6 +106,12 @@ function nextPlayer() {
 
     document.querySelector(".dice").style.display="none";
 }
+
+//+++++++++++++++++++++++++++++++++
+//BTN NEW 
+//+++++++++++++++++++++++++++++++
+document.querySelector(".btn-new").addEventListener("click", init);
+    
 
 
 
